@@ -5,102 +5,102 @@ import codecs
 import os.path
 
 class PublicSuffixList(object):
-	def __init__(self, input_file=None):
-		"""Reads and parses public suffix list.
-		
-		input_file is a file object or another iterable that returns
-		lines of a public suffix list file. If input_file is None, an
-		UTF-8 encoded file named "publicsuffix.txt" in the same
-		directory as this Python module is used.
-		
-		The file format is described at http://publicsuffix.org/list/
-		"""
+    def __init__(self, input_file=None):
+        """Reads and parses public suffix list.
 
-		if input_file is None:
-			input_path = os.path.join(os.path.dirname(__file__), 'publicsuffix.txt')
-			input_file = codecs.open(input_path, "r", "utf8")
+        input_file is a file object or another iterable that returns
+        lines of a public suffix list file. If input_file is None, an
+        UTF-8 encoded file named "publicsuffix.txt" in the same
+        directory as this Python module is used.
 
-		root = self._build_structure(input_file)
-		self.root = self._simplify(root)
+        The file format is described at http://publicsuffix.org/list/
+        """
 
-	def _find_node(self, parent, parts):
-		if not parts:
-			return parent
+        if input_file is None:
+            input_path = os.path.join(os.path.dirname(__file__), 'publicsuffix.txt')
+            input_file = codecs.open(input_path, "r", "utf8")
 
-		if len(parent) == 1:
-			parent.append({})
+        root = self._build_structure(input_file)
+        self.root = self._simplify(root)
 
-		assert len(parent) == 2
-		negate, children = parent
+    def _find_node(self, parent, parts):
+        if not parts:
+            return parent
 
-		child = parts.pop()
+        if len(parent) == 1:
+            parent.append({})
 
-		child_node = children.get(child, None)
+        assert len(parent) == 2
+        negate, children = parent
 
-		if not child_node:
-			children[child] = child_node = [0]
+        child = parts.pop()
 
-		return self._find_node(child_node, parts)
+        child_node = children.get(child, None)
 
-	def _add_rule(self, root, rule):
-		if rule.startswith('!'):
-			negate = 1
-			rule = rule[1:]
-		else:
-			negate = 0
+        if not child_node:
+            children[child] = child_node = [0]
 
-		parts = rule.split('.')
-		self._find_node(root, parts)[0] = negate
+        return self._find_node(child_node, parts)
 
-	def _simplify(self, node):
-		if len(node) == 1:
-			return node[0]
+    def _add_rule(self, root, rule):
+        if rule.startswith('!'):
+            negate = 1
+            rule = rule[1:]
+        else:
+            negate = 0
 
-		return (node[0], dict((k, self._simplify(v)) for (k, v) in node[1].items()))
+        parts = rule.split('.')
+        self._find_node(root, parts)[0] = negate
 
-	def _build_structure(self, fp):
-		root = [0]
+    def _simplify(self, node):
+        if len(node) == 1:
+            return node[0]
 
-		for line in fp:
-			line = line.strip()
-			if line.startswith('//') or not line:
-				continue
+        return (node[0], dict((k, self._simplify(v)) for (k, v) in node[1].items()))
 
-			self._add_rule(root, line.split()[0].lstrip('.'))
+    def _build_structure(self, fp):
+        root = [0]
 
-		return root
+        for line in fp:
+            line = line.strip()
+            if line.startswith('//') or not line:
+                continue
 
-	def _lookup_node(self, matches, depth, parent, parts):
-		if parent in (0, 1):
-			negate = parent
-			children = None
-		else:
-			negate, children = parent
+            self._add_rule(root, line.split()[0].lstrip('.'))
 
-		matches[-depth] = negate
+        return root
 
-		if depth < len(parts) and children:
-			for name in ('*', parts[-depth]):
-				child = children.get(name, None)
-				if child is not None:
-					self._lookup_node(matches, depth+1, child, parts)
+    def _lookup_node(self, matches, depth, parent, parts):
+        if parent in (0, 1):
+            negate = parent
+            children = None
+        else:
+            negate, children = parent
 
-	def get_public_suffix(self, domain):
-		"""get_public_suffix("www.example.com") -> "example.com"
+        matches[-depth] = negate
 
-		Calling this function with a DNS name will return the
-		public suffix for that name.
+        if depth < len(parts) and children:
+            for name in ('*', parts[-depth]):
+                child = children.get(name, None)
+                if child is not None:
+                    self._lookup_node(matches, depth+1, child, parts)
 
-		Note that for internationalized domains the list at
-		http://publicsuffix.org uses decoded names, so it is
-		up to the caller to decode any Punycode-encoded names.
-		"""
+    def get_public_suffix(self, domain):
+        """get_public_suffix("www.example.com") -> "example.com"
 
-		parts = domain.lower().lstrip('.').split('.')
-		hits = [None] * len(parts)
+        Calling this function with a DNS name will return the
+        public suffix for that name.
 
-		self._lookup_node(hits, 1, self.root, parts)
+        Note that for internationalized domains the list at
+        http://publicsuffix.org uses decoded names, so it is
+        up to the caller to decode any Punycode-encoded names.
+        """
 
-		for i, what in enumerate(hits):
-			if what is not None and what == 0:
-				return '.'.join(parts[i:])
+        parts = domain.lower().lstrip('.').split('.')
+        hits = [None] * len(parts)
+
+        self._lookup_node(hits, 1, self.root, parts)
+
+        for i, what in enumerate(hits):
+            if what is not None and what == 0:
+                return '.'.join(parts[i:])
