@@ -1,8 +1,17 @@
+Copyright (c) 2013 Pengkui Luo <pengkui.luo@gmail.com>
+
+This Python module was folked from Tomaž Šolc's repo
+http://pypi.python.org/pypi/publicsuffix
+
+Redistributed under the same MIT X11 license.
+
+
 Copyright (c) 2011 Tomaž Šolc <tomaz.solc@tablix.org>
 
 Python module included in this distribution is based on the code downloaded
 from http://code.google.com/p/python-public-suffix-list/, which is
 available under the following license:
+
 
 Copyright (c) 2009 David Wilson
 
@@ -23,7 +32,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
-
 
 
 The Public Suffix List included in this distribution has been downloaded
