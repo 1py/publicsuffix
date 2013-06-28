@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import publicsuffix
 import unittest
 import sys
@@ -129,3 +132,7 @@ class TestPublicSuffix(unittest.TestCase):
         checkPublicSuffix('k12.ak.us', 'k12.ak.us');
         checkPublicSuffix('test.k12.ak.us', 'test.k12.ak.us');
         checkPublicSuffix('www.test.k12.ak.us', 'test.k12.ak.us');
+
+if __name__ == '__main__':
+    unittest.main()
+

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 from distutils.core import Command, setup
 from distutils.command.install import INSTALL_SCHEMES
