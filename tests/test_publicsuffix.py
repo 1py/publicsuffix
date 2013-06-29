@@ -18,19 +18,12 @@ import unittest
 import os, sys, time
 
 from netutils import publicsuffix
-
+#import publicsuffix
 
 class Test_get_public_suffix (unittest.TestCase):
+    """ Test the main publicsuffix.get_public_suffix() interface.
     """
-    """
-    def setUp (self):
-        """
-        """
-        pass
-
     def test_basic (self):
-        """
-        """
         for d in [
             '3ld.google.com',
             '4ld.3ld.google.com',
@@ -39,59 +32,50 @@ class Test_get_public_suffix (unittest.TestCase):
             self.assertEqual('google.com',
                 publicsuffix.get_public_suffix(d))
 
-    def test_wildcard (self):
-        """
-            In the effective_tld_names file, some TLDs have only one rule and
-            it is wildcard, e.g.
 
-            // bd : http://en.wikipedia.org/wiki/.bd
-            *.bd
-            // et : http://en.wikipedia.org/wiki/.et
-            *.et
+    # The following test cases are originally from
+    # http://mxr.mozilla.org/mozilla-central/source/netwerk/test/unit/data/test_psl.txt?raw=1
+    # and adapted by Tomaz Solc
 
-            But some TLDs
-            // eu : http://en.wikipedia.org/wiki/.eu
-            eu
+    def _checkPublicSuffix(self, a, b):
+        self.assertEqual(publicsuffix.get_public_suffix(a), b)
 
-        """
-        pass
-
-
-    def test_publicsuffix_org_list_test_original (self):
-        """ Test cases provided by
-            http://mxr.mozilla.org/mozilla-central/source/netwerk/test/unit/data/test_psl.txt?raw=1
-
-            Note that Tomaz's version (till v1.0.4)
-        """
-
-        def checkPublicSuffix(a, b):
-            self.assertEqual(publicsuffix.get_public_suffix(a), b)
-
-        # Mixed case.
+    def test_mixed_case (self):
+        checkPublicSuffix = self._checkPublicSuffix
         checkPublicSuffix('COM', 'com');
         checkPublicSuffix('example.COM', 'example.com');
         checkPublicSuffix('WwW.example.COM', 'example.com');
-        # Leading dot.
+
+    def test_leading_dot (self):
+        checkPublicSuffix = self._checkPublicSuffix
         checkPublicSuffix('.com', 'com');
         checkPublicSuffix('.example', 'example');
         checkPublicSuffix('.example.com', 'example.com');
         checkPublicSuffix('.example.example', 'example');
-        # Unlisted TLD.
+
+    def test_unlisted_tld (self):
+        checkPublicSuffix = self._checkPublicSuffix
         checkPublicSuffix('example', 'example');
         checkPublicSuffix('example.example', 'example');
         checkPublicSuffix('b.example.example', 'example');
         checkPublicSuffix('a.b.example.example', 'example');
-        # Listed, but non-Internet, TLD.
+
+    def test_listed_but_non_internet_tld (self):
+        checkPublicSuffix = self._checkPublicSuffix
         checkPublicSuffix('local', 'local');
         checkPublicSuffix('example.local', 'local');
         checkPublicSuffix('b.example.local', 'local');
         checkPublicSuffix('a.b.example.local', 'local');
-        # TLD with only 1 rule.
+
+    def test_tld_with_only_1_rule (self):
+        checkPublicSuffix = self._checkPublicSuffix
         checkPublicSuffix('biz', 'biz');
         checkPublicSuffix('domain.biz', 'domain.biz');
         checkPublicSuffix('b.domain.biz', 'domain.biz');
         checkPublicSuffix('a.b.domain.biz', 'domain.biz');
-        # TLD with some 2-level rules.
+
+    def test_tld_with_some_2_level_rules (self):
+        checkPublicSuffix = self._checkPublicSuffix
         checkPublicSuffix('com', 'com');
         checkPublicSuffix('example.com', 'example.com');
         checkPublicSuffix('b.example.com', 'example.com');
@@ -101,12 +85,41 @@ class Test_get_public_suffix (unittest.TestCase):
         checkPublicSuffix('b.example.uk.com', 'example.uk.com');
         checkPublicSuffix('a.b.example.uk.com', 'example.uk.com');
         checkPublicSuffix('test.ac', 'test.ac');
-        # TLD with only 1 (wildcard) rule.
+
+    def test_tld_with_only_1_wildcard_rule (self):
+        """ For example,
+            // bd : http://en.wikipedia.org/wiki/.bd
+            *.bd
+
+            To be distinguished from
+            // eu : http://en.wikipedia.org/wiki/.eu
+            eu
+
+            It seems that the effective_tld_names list has a bug on this.
+            If there is a wildcard rule '*.bd', there should also be a rule
+            'bd', or other exception rules.
+        """
+        checkPublicSuffix = self._checkPublicSuffix
         checkPublicSuffix('cy', 'cy');
         checkPublicSuffix('c.cy', 'c.cy');
         checkPublicSuffix('b.c.cy', 'b.c.cy');
         checkPublicSuffix('a.b.c.cy', 'b.c.cy');
-        # More complex TLD.
+        # These may seem counter-intuitive. No body believes that '2011.il' is
+        # a valid TLD.
+        checkPublicSuffix('www.2011.il', 'www.2011.il')
+        checkPublicSuffix('www.aabop-ziiy.kw', 'www.aabop-ziiy.kw')
+
+    def test_tld_with_wildcard_rule_and_exceptions (self):
+        checkPublicSuffix = self._checkPublicSuffix
+        checkPublicSuffix('om', 'om');
+        checkPublicSuffix('test.om', 'test.om');
+        checkPublicSuffix('b.test.om', 'b.test.om');
+        checkPublicSuffix('a.b.test.om', 'b.test.om');
+        checkPublicSuffix('songfest.om', 'songfest.om');
+        checkPublicSuffix('www.songfest.om', 'songfest.om');
+
+    def test_more_complex_tld (self):
+        checkPublicSuffix = self._checkPublicSuffix
         checkPublicSuffix('jp', 'jp');
         checkPublicSuffix('test.jp', 'test.jp');
         checkPublicSuffix('www.test.jp', 'test.jp');
@@ -119,14 +132,9 @@ class Test_get_public_suffix (unittest.TestCase):
         checkPublicSuffix('a.b.c.kobe.jp', 'b.c.kobe.jp');
         checkPublicSuffix('city.kobe.jp', 'city.kobe.jp');	# Exception rule.
         checkPublicSuffix('www.city.kobe.jp', 'city.kobe.jp');	# Exception rule.
-        # TLD with a wildcard rule and exceptions.
-        checkPublicSuffix('om', 'om');
-        checkPublicSuffix('test.om', 'test.om');
-        checkPublicSuffix('b.test.om', 'b.test.om');
-        checkPublicSuffix('a.b.test.om', 'b.test.om');
-        checkPublicSuffix('songfest.om', 'songfest.om');
-        checkPublicSuffix('www.songfest.om', 'songfest.om');
-        # US K12.
+
+    def test_us_k12_tld (self):
+        checkPublicSuffix = self._checkPublicSuffix
         checkPublicSuffix('us', 'us');
         checkPublicSuffix('test.us', 'test.us');
         checkPublicSuffix('www.test.us', 'test.us');
