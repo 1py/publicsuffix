@@ -3,8 +3,7 @@ Copyright (c) 2013 Pengkui Luo <pengkui.luo@gmail.com>
 This Python module was folked from Tomaž Šolc's repo
 http://pypi.python.org/pypi/publicsuffix
 
-Redistributed under the same MIT X11 license.
-
+Redistributed under the same MIT/Expat license.
 
 Copyright (c) 2011 Tomaž Šolc <tomaz.solc@tablix.org>
 

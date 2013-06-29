@@ -32,8 +32,8 @@ combination with a port number or an username, etc.). It is up to the caller
 to ensure only domain names are passed to the get_public_suffix() method.
 
 
-Source (MIT X11 license)
-------------------------
+Source (MIT/Expat License)
+--------------------------
 
 Pengkui Luo's folk:
 http://github.com/pengkui/publicsuffix
@@ -53,7 +53,7 @@ Their lookup complexity is as high as O(N), where N is the total number of
 rules. Note: ``matches = sorted(r for r in self if r.match(host))`` in tld().
 
 
-A Ruby version by Simone Carletti <weppos@weppos.net>, MIT X11 license
+A Ruby version by Simone Carletti <weppos@weppos.net>, MIT/Expat license
 
 http://github.com/weppos/publicsuffix-ruby
 
@@ -62,9 +62,3 @@ And implementations in other languges mentioned on the official page:
 
 http://publicsuffix.org/learn/
 
-
-
---
-
-Pengkui Luo
-06/28/2013

@@ -6,7 +6,9 @@
 # Copyright (C) 2013 Pengkui Luo <pengkui.luo@gmail.com>
 # Copyright (c) 2011 Tomaz Solc <tomaz.solc@tablix.org>
 # Copyright (c) 2009 David Wilson
-## Permission is hereby granted, free of charge, to any person obtaining a
+## The MIT/Expat License
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
 # the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -23,6 +25,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
+#
 #
 # The Public Suffix List included in this distribution has been downloaded
 # from http://publicsuffix.org/ and is covered by a separate license. Please
