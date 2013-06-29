@@ -22,24 +22,49 @@ Module content
 The module exports a class that parses the Public Suffix List and allows
 queries for individual domain names::
 
-    >>> from publicsuffix import PublicSuffixList
-    >>> psl = PublicSuffixList()
-    >>> psl.get_public_suffix("www.example.com")
+    >>> import publicsuffix
+    >>> publicsuffix.get_public_suffix("www.example.com")
     'example.com'
 
 Please note that the ``host`` part of an URL can contain strings that are
 not plain DNS domain names (IP addresses, Punycode-encoded names, name in
-combination with a port number or an username, etc.). It is up to the
-caller to ensure only domain names are passed to the get_public_suffix()
-method.
+combination with a port number or an username, etc.). It is up to the caller
+to ensure only domain names are passed to the get_public_suffix() method.
 
 
-Source
-------
+Source (MIT X11 license)
+------------------------
 
-You can get a local copy of the development repository with::
+Pengkui Luo's folk:
+http://github.com/pengkui/publicsuffix
 
-    git clone http://www.tablix.org/~avian/git/publicsuffix.git
+from Tomaz Solc's pypi repo
+http://pypi.python.org/pypi/publicsuffix
 
-..
-    vim: set filetype=rst:
+
+Other implementations
+---------------------
+
+By Joel Watts <joel@joelwatts.com>, Apache License v2.0
+
+http://github.com/jpwatts/publicsuffix
+
+Their lookup complexity is as high as O(N), where N is the total number of
+rules. Note: ``matches = sorted(r for r in self if r.match(host))`` in tld().
+
+
+A Ruby version by Simone Carletti <weppos@weppos.net>, MIT X11 license
+
+http://github.com/weppos/publicsuffix-ruby
+
+
+And implementations in other languges mentioned on the official page:
+
+http://publicsuffix.org/learn/
+
+
+
+--
+
+Pengkui Luo
+06/28/2013
