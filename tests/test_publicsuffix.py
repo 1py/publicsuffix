@@ -1,70 +1,71 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# Updated 06/28/2013
+#
+# Copyright (C) 2013 Pengkui Luo <pengkui.luo@gmail.com>
+# Copyright (c) 2011 Tomaz Solc <tomaz.solc@tablix.org>
+# Copyright (C) 2011 Rob Stradling of Comodo
+#
+# Any copyright is dedicated to the Public Domain.
+# http://creativecommons.org/publicdomain/zero/1.0/
+#
+""" Unit tests for publicsuffix.py
+"""
+print('Executing %s' %  __file__)
 
-import publicsuffix
 import unittest
-import sys
+import os, sys, time
 
-if sys.version < '3':
-    import codecs
-    def u(x):
-        return codecs.unicode_escape_decode(x)[0]
-else:
-    def u(x):
-        return x
+from netutils import publicsuffix
 
-class TestPublicSuffix(unittest.TestCase):
-    def test_empty(self):
-        psl = publicsuffix.PublicSuffixList([])
 
-        self.assertEqual(psl.get_public_suffix("com"), "com")
-        self.assertEqual(psl.get_public_suffix("COM"), "com")
-        self.assertEqual(psl.get_public_suffix(".com"), "com")
-        self.assertEqual(psl.get_public_suffix("a.example.com"), "com")
-
-    def test_basic(self):
-        psl = publicsuffix.PublicSuffixList([
-            "com"])
-
-        self.assertEqual(psl.get_public_suffix("a.example.com"), "example.com")
-        self.assertEqual(psl.get_public_suffix("a.a.example.com"), "example.com")
-        self.assertEqual(psl.get_public_suffix("a.a.a.example.com"), "example.com")
-        self.assertEqual(psl.get_public_suffix("A.example.com"), "example.com")
-        self.assertEqual(psl.get_public_suffix(".a.a.example.com"), "example.com")
-
-    def test_exception(self):
-        psl = publicsuffix.PublicSuffixList([
-            "*.example.com",
-            "!b.example.com"])
-
-        self.assertEqual(psl.get_public_suffix("a.example.com"), "a.example.com")
-        self.assertEqual(psl.get_public_suffix("a.a.example.com"), "a.a.example.com")
-        self.assertEqual(psl.get_public_suffix("a.a.a.example.com"), "a.a.example.com")
-        self.assertEqual(psl.get_public_suffix("a.a.a.a.example.com"), "a.a.example.com")
-
-        self.assertEqual(psl.get_public_suffix("b.example.com"), "b.example.com")
-        self.assertEqual(psl.get_public_suffix("b.b.example.com"), "b.example.com")
-        self.assertEqual(psl.get_public_suffix("b.b.b.example.com"), "b.example.com")
-        self.assertEqual(psl.get_public_suffix("b.b.b.b.example.com"), "b.example.com")
-
-    def test_unicode(self):
-        psl = publicsuffix.PublicSuffixList([
-            u("\u0440\u0444")])
-
-        self.assertEqual(psl.get_public_suffix(u("\u0440\u0444")), u("\u0440\u0444"))
-        self.assertEqual(psl.get_public_suffix(u("example.\u0440\u0444")), u("example.\u0440\u0444"))
-        self.assertEqual(psl.get_public_suffix(u("a.example.\u0440\u0444")), u("example.\u0440\u0444"))
-        self.assertEqual(psl.get_public_suffix(u("a.a.example.\u0440\u0444")), u("example.\u0440\u0444"))
-
-    def test_publicsuffix_org_list_test(self):
+class Test_get_public_suffix (unittest.TestCase):
+    """
+    """
+    def setUp (self):
         """
-        http://mxr.mozilla.org/mozilla-central/source/netwerk/test/unit/data/test_psl.txt?raw=1
         """
+        pass
 
-        psl = publicsuffix.PublicSuffixList()
+    def test_basic (self):
+        """
+        """
+        for d in [
+            '3ld.google.com',
+            '4ld.3ld.google.com',
+            '5ld.4ld.3ld.google.com',
+        ]:
+            self.assertEqual('google.com',
+                publicsuffix.get_public_suffix(d))
+
+    def test_wildcard (self):
+        """
+            In the effective_tld_names file, some TLDs have only one rule and
+            it is wildcard, e.g.
+
+            // bd : http://en.wikipedia.org/wiki/.bd
+            *.bd
+            // et : http://en.wikipedia.org/wiki/.et
+            *.et
+
+            But some TLDs
+            // eu : http://en.wikipedia.org/wiki/.eu
+            eu
+
+        """
+        pass
+
+
+    def test_publicsuffix_org_list_test_original (self):
+        """ Test cases provided by
+            http://mxr.mozilla.org/mozilla-central/source/netwerk/test/unit/data/test_psl.txt?raw=1
+
+            Note that Tomaz's version (till v1.0.4)
+        """
 
         def checkPublicSuffix(a, b):
-            self.assertEqual(psl.get_public_suffix(a), b)
+            self.assertEqual(publicsuffix.get_public_suffix(a), b)
 
         # Mixed case.
         checkPublicSuffix('COM', 'com');
@@ -136,6 +137,6 @@ class TestPublicSuffix(unittest.TestCase):
         checkPublicSuffix('test.k12.ak.us', 'test.k12.ak.us');
         checkPublicSuffix('www.test.k12.ak.us', 'test.k12.ak.us');
 
+
 if __name__ == '__main__':
     unittest.main()
-
