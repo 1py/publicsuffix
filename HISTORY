@@ -1,0 +1,36 @@
+Version history for publicsuffix
+
+
+Version 1.0.4.1 and onwards by Pengkui Luo:
+
+1.0.4.1
+	* Folked from Tomaz's repo.
+	* Leveled the search-tree building up to import time, making it
+	  globally cached at sys.modules so as to avoid being built
+	  multiple times in a single process.
+	* Removed the unnecessary class container, and leveled up
+	  the lookup function to the package level.
+	* Updated the effective_tld_names to May 2013.
+	* Re-organized code structure and test cases.
+
+
+Versions 1.0.0-1.0.4 by Tomaz Solc:
+
+1.0.4
+	* Added missing change log.
+
+1.0.3
+	* Updated publicsuffix.txt to the latest version from Mozilla.
+	* Added trove classifiers.
+	* Minor update of the README.
+
+1.0.2
+	* Compatibility with Python 3.x (thanks to Joern
+	  Koerner) and Python 2.5
+
+1.0.1
+	* Fixed installation issue under virtualenv (thanks to
+	  Mark McClain)
+
+1.0.0
+	* First release

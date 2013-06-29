@@ -17,5 +17,5 @@ from .publicsuffix import *
 del sys, absolute_import
 
 # The first three numbers are sync'd with Tomaz' distribution.
-__version__ = '1.0.4.1-a1'
+__version__ = '1.0.4.1'
 
