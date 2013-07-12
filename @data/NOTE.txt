@@ -1,0 +1,2 @@
+https://wiki.mozilla.org/Public_Suffix_List
+http://publicsuffix.org/
