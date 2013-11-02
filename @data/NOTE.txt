@@ -1,2 +1,10 @@
 https://wiki.mozilla.org/Public_Suffix_List
 http://publicsuffix.org/
+
+
+Potential issues:
+
+>>> publicsuffix.get_public_suffix('d3lvr7yuk4uaui.cloudfront.net')
+'d3lvr7yuk4uaui.cloudfront.net'
+
+Is this expected? Why is 'cloudfront.net' an eTLD?
